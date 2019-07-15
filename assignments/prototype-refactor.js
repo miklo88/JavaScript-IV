@@ -19,16 +19,27 @@ Prototype Refactor
   
   Each constructor function has unique properties and methods that are defined in their block comments below:
 */
-function GameObject(attrs) {
-    this.createdAt = attrs.createdAt;
-    this.name = attrs.name;
-    this.dimensions = attrs.dimensions;
+// function GameObject(attrs) {
+//     this.createdAt = attrs.createdAt;
+//     this.name = attrs.name;
+//     this.dimensions = attrs.dimensions;
+//   }
+
+  class GameObject {  //CREATING CLASS -------------
+    constructor(attrs){ //MOVED OBJECT INSIDE 
+      this.createdAt = attrs.createdAt;
+      this.name = attrs.name;
+      this.dimensions = attrs.dimensions;
+    }
+      destroy() {  // INVOKING
+        return `${this.name} was removed from the game`;
+      }
   }
-  
-  GameObject.prototype.destroy = () => {
-    return `${this.name} was removed from the game`;
-  }
-  
+
+  // GameObject.prototype.destroy = () => {
+  //   return `${this.name} was removed from the game`;
+  // }
+
   /*
   === GameObject ===
   * createdAt
@@ -37,15 +48,25 @@ function GameObject(attrs) {
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
   */
   
-  function CharacterStats(attrs) {
-    this.healthPoints = attrs.healthPoints;
-    GameObject.call(this, attrs); // explicitly binding
-  } 
-  
-  CharacterStats.prototype = Object.create(GameObject.prototype); //inheritance of the GameObject
-  CharacterStats.prototype.takeDamage = function(){
-  return `${this.name} took damage.`;
+  // function CharacterStats(attrs) {
+  //   this.healthPoints = attrs.healthPoints;
+  //   GameObject.call(this, attrs); // explicitly binding
+  // } 
+  class CharacterStats extends GameObject {  // passing everything down  class
+    constructor(attrs){
+      super(attrs);
+      this.healthPoints = attrs.healthPoints;
+    }
+    takeDamage() { //method attrs invoking
+      return `${this.name} took damage.`;
+    }
   }
+
+
+  // CharacterStats.prototype = Object.create(GameObject.prototype); //inheritance of the GameObject
+  // CharacterStats.prototype.takeDamage = function(){
+  // return `${this.name} took damage.`;
+  // }
   /*
   === CharacterStats ===
   * healthPoints
@@ -58,21 +79,32 @@ function GameObject(attrs) {
   //   this.language = attrs.language;
   //   CharacterStats.call(this, attrs);
   // }
+  class Humanoid extends CharacterStats {
+    constructor(attrs){
+      super(attrs);
+      this.team = attrs.team;
+      this.weapons = attrs.weapons;
+      this.language = attrs.language;
+    }
+    greet() {
+      return `${this.name} offers a greeting ${this.language}`;
+    }
+  }
   //   Humanoid.prototype = Object.create(CharacterStats.prototype); //inheritance of the characterstats
   //   Humanoid.prototype.greet = function(){
   //   return `${this.name} offers a greeting ${this.language}`;
   // }
-  function Humanoid(attrs){
-    CharacterStats.call(this, attrs) // implicit binding
-    this.team = attrs.team;
-    this.weapons = attrs.weapons;
-    this.language = attrs.language;
-  }
+  // function Humanoid(attrs){
+  //   CharacterStats.call(this, attrs) // implicit binding
+  //   this.team = attrs.team;
+  //   this.weapons = attrs.weapons;
+  //   this.language = attrs.language;
+  // }
   
-  Humanoid.prototype = Object.create(CharacterStats.prototype) // inheritence
-  Humanoid.prototype.greet = function(){
-    return `${this.name} offers a greeting in ${this.language}.`
-  }
+  // Humanoid.prototype = Object.create(CharacterStats.prototype) // inheritence
+  // Humanoid.prototype.greet = function(){
+  //   return `${this.name} offers a greeting in ${this.language}.`
+  // }
   /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
   * team
@@ -143,14 +175,33 @@ function GameObject(attrs) {
     language: 'Elvish',
   });
   
-  // Stretch task: \
-  // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
-    function Hero(attrs) {
-    Humanoid.call(this, attrs) //implicit binding
+
+
+  // // Stretch task: \
+  // // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
+  class Hero extends CharacterStats {
+    constructor(attrs){
+      super(attrs);
+      this.team = attrs.team;
+      this.weapons = attrs.weapons;
+      this.language = attrs.language;
+    }
+    greet() {
+      return `${this.name} offers a greeting ${this.language}`;
+    }
   }
-    Hero.prototype = Object.create(Humanoid.prototype); //inheritance
-  
-    //hero creation
+  class Villain extends CharacterStats {
+    constructor(attrs){
+      super(attrs);
+      this.team = attrs.team;
+      this.weapons = attrs.weapons;
+      this.language = attrs.language;
+    }
+    greet() {
+      return `${this.name} offers a greeting ${this.language}`;
+    }
+  }
+  //   //hero creation
     const mario = new Hero({
     createdAt: new Date(),
     dimensions: {
@@ -168,11 +219,11 @@ function GameObject(attrs) {
     language: 'Brooklyn Italian',
   });
   
-  // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.   
-    function Villain(attrs) {
-    Humanoid.call(this, attrs) // implicit binding
-  }
-    Villain.prototype = Object.create(Humanoid.prototype); //inheritence
+  // // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.   
+  //   function Villain(attrs) {
+  //   Humanoid.call(this, attrs) // implicit binding
+  // }
+  //   Villain.prototype = Object.create(Humanoid.prototype); //inheritence
   
     // villain creation
     const bowser = new Villain({
@@ -202,10 +253,10 @@ function GameObject(attrs) {
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-  //hero invoke
+  // //hero invoke
   console.log(mario.weapons);
   console.log(mario.greet());
-  //villain invoke
+  // //villain invoke
   console.log(bowser.weapons);
   console.log(bowser.greet());
   
